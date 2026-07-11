@@ -1,0 +1,54 @@
+name: HTML to APK
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Cordova
+        run: npm install -g cordova
+
+      - name: Create Cordova Project
+        run: |
+          # 1. إنشاء المشروع بالاسم الجديد fatomi ومعرّف الحزمة الجديد
+          cordova create build_output com.whitefoxstudios.fatomi Fatomi
+          
+          # 2. نسخ ملفات الويب مع استبعاد مجلد البناء
+          rsync -av --exclude='build_output' ./ build_output/www/
+          
+          # 3. الدخول للمجلد وإعداد المنصة
+          cd build_output
+          cordova platform add android
+          
+          # 4. دمج الأيقونة إذا كانت موجودة
+          if [ -f "www/icon.png" ]; then
+            sed -i '/<\/widget>/i \    <icon src="www/icon.png" \/>' config.xml
+          fi
+          
+          # الموافقة على تراخيص الأندرويد وبدء البناء
+          yes | sdkmanager --licenses || true
+          cordova build android --device
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Fatomi-APK
+          path: build_output/platforms/android/app/build/outputs/apk/debug/app-debug.apk
