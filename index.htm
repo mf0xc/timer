@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#050508">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>حمودي & فاطمة</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glow-violet: #7c3aed;
+      --glow-rose: #f43f5e;
+      --glow-blue: #3b82f6;
+      --deep-bg: #050508;
+      --card-bg: rgba(255, 255, 255, 0.025);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-highlight: rgba(255, 255, 255, 0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-touch-callout: none;
+      user-select: none;
+      -webkit-user-select: none;
+      outline: none;
+      overscroll-behavior: none;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      touch-action: none;
+      font-family: 'Tajawal', sans-serif;
+      background: var(--deep-bg);
+      color: #ffffff;
+    }
+
+    /* Animated Deep Background */
+    .bg-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 85%, rgba(244, 63, 94, 0.15) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
+        linear-gradient(180deg, #080810 0%, #050508 40%, #0a0812 100%);
+    }
+
+    /* Floating Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+    }
+
+    .orb-violet {
+      width: 350px;
+      height: 350px;
+      background: #7c3aed;
+      top: -120px;
+      left: -100px;
+      animation: orbDrift 12s ease-in-out infinite;
+    }
+
+    .orb-rose {
+      width: 300px;
+      height: 300px;
+      background: #be185d;
+      bottom: -100px;
+      right: -80px;
+      animation: orbDrift 14s ease-in-out infinite reverse;
+    }
+
+    @keyframes orbDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(40px, -30px) scale(1.1); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    /* Particles */
+    .particle {
+      position: fixed;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      pointer-events: none;
+      z-index: 2;
+      animation: particleFloat linear infinite;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(110vh) scale(0); opacity: 0; }
+      8% { opacity: 0.6; }
+      92% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* App Container */
+    .app-shell {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+      perspective: 1500px;
+      overflow: hidden;
+    }
+
+    /* Glass Card */
+    .glass-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      background: var(--card-bg);
+      backdrop-filter: blur(40px) saturate(1.8);
+      -webkit-backdrop-filter: blur(40px) saturate(1.8);
+      border: 1px solid var(--card-border);
+      border-radius: 36px;
+      padding: 36px 28px;
+      transform-style: preserve-3d;
+      transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      transition: transform 0.15s ease-out;
+      opacity: 0;
+      box-shadow:
+        0 30px 60px -15px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08),
+        inset 0 0 100px rgba(124, 58, 237, 0.03);
+      animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(0.88) translateY(30px); }
+      to { opacity: 1; transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(1) translateY(0); }
+    }
+
+    /* Specular Highlight Surface */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 36px;
+      background: radial-gradient(
+        circle at calc(50% + var(--hx, 0px)) calc(50% + var(--hy, 0px)),
+        rgba(255, 255, 255, 0.18) 0%,
+        rgba(255, 255, 255, 0.06) 25%,
+        transparent 55%
+      );
+      pointer-events: none;
+      z-index: 2;
+      mix-blend-mode: overlay;
+      opacity: 0.8;
+    }
+
+    /* Ambient Glow Behind Card */
+    .glass-card::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 38px;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(244, 63, 94, 0.2));
+      z-index: -1;
+      filter: blur(25px);
+      opacity: 0.6;
+      animation: ambientPulse 4s ease-in-out infinite;
+    }
+
+    @keyframes ambientPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.75; }
+    }
+
+    /* Header & Avatars */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      transform: translateZ(40px);
+    }
+
+    .avatar {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      font-weight: 900;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-hamoudi {
+      background: linear-gradient(145deg, #1e1b4b, #4c1d95, #2563eb);
+      box-shadow:
+        0 0 40px rgba(37, 99, 235, 0.45),
+        0 0 80px rgba(76, 29, 149, 0.25),
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      border: 2.5px solid rgba(96, 165, 250, 0.45);
+      color: #dbeafe;
+    }
+
+    .avatar-fatima {
+      background: linear-gradient(145deg, #831843, #be185d, #f43f5e);
+      box-shadow:
+        0 0 40px rgba(244, 63, 94, 0.45),
+        0 0 80px rgba(190, 24, 93, 0.25),
+        inset 0 2px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+      border: 2.5px solid rgba(251, 113, 133, 0.45);
+      color: #fce7f3;
+    }
+
+    .avatar-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: rgba(255, 255, 255, 0.92);
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+      letter-spacing: 0.5px;
+    }
+
+    /* 3D Heart */
+    .heart-wrap {
+      position: relative;
+      transform: translateZ(60px);
+      filter: drop-shadow(0 0 20px rgba(244, 63, 94, 0.6));
+    }
+
+    .heart-3d {
+      width: 64px;
+      height: 64px;
+      animation: heartBeat 1.5s ease-in-out infinite;
+      transform-origin: center;
+    }
+
+    @keyframes heartBeat {
+      0%, 100% { transform: scale(1); }
+      12% { transform: scale(1.18); }
+      24% { transform: scale(1); }
+      36% { transform: scale(1.14); }
+      60% { transform: scale(1); }
+    }
+
+    /* Confession Timestamp */
+    .confession-block {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 3;
+      transform: translateZ(25px);
+    }
+
+    .confession-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.88);
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.045);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      letter-spacing: 0.3px;
+    }
+
+    .confession-badge::before {
+      content: '✦';
+      color: #f43f5e;
+      font-size: 12px;
+    }
+
+    /* Counter Engine */
+    .counter-engine {
+      text-align: center;
+      position: relative;
+      z-index: 3;
+      transform: translateZ(25px);
+    }
+
+    .counter-status {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.45);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      margin-bottom: 12px;
+    }
+
+    .days-hero {
+      font-size: 88px;
+      font-weight: 900;
+      line-height: 0.95;
+      background: linear-gradient(180deg, #ffffff 0%, #e9d5ff 40%, #fbcfe8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.25));
+      margin-bottom: 4px;
+    }
+
+    .days-caption {
+      font-size: 20px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 28px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .time-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .time-unit-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 22px;
+      padding: 18px 6px;
+      backdrop-filter: blur(8px);
+      transform: translateZ(15px);
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .time-unit-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    }
+
+    .time-unit-card:active {
+      transform: translateZ(25px) scale(0.96);
+    }
+
+    .time-digits {
+      font-size: 34px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    }
+
+    .time-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.45);
+      letter-spacing: 1px;
+    }
+
+    /* Permission Overlay */
+    .permission-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(5, 5, 8, 0.96);
+      backdrop-filter: blur(30px);
+      -webkit-backdrop-filter: blur(30px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      text-align: center;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+    }
+
+    .permission-layer.dismissed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .permission-icon {
+      font-size: 72px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 20px rgba(124, 58, 237, 0.5));
+      animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .permission-title {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .permission-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.55);
+      margin-bottom: 40px;
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .permission-action {
+      position: relative;
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+      border: none;
+      color: #fff;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 16px 48px;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 12px 40px rgba(124, 58, 237, 0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      overflow: hidden;
+    }
+
+    .permission-action::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .permission-action:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 50px rgba(124, 58, 237, 0.55);
+    }
+
+    .permission-action:hover::after {
+      opacity: 1;
+    }
+
+    .permission-action:active {
+      transform: translateY(-1px);
+    }
+
+    /* Responsive Tweaks */
+    @media (max-height: 720px) {
+      .glass-card { padding: 28px 22px; border-radius: 30px; }
+      .avatar { width: 72px; height: 72px; font-size: 26px; }
+      .heart-3d { width: 52px; height: 52px; }
+      .days-hero { font-size: 72px; }
+      .time-digits { font-size: 28px; }
+      .time-unit-card { padding: 14px 4px; border-radius: 18px; }
+      .confession-block { margin-bottom: 22px; }
+      .days-caption { margin-bottom: 22px; }
+    }
+
+    @media (max-width: 360px) {
+      .glass-card { padding: 24px 18px; }
+      .days-hero { font-size: 64px; }
+      .time-digits { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-mesh"></div>
+  <div class="orb orb-violet"></div>
+  <div class="orb orb-rose"></div>
+  <div id="particleField"></div>
+
+  <div class="permission-layer" id="permissionLayer">
+    <div class="permission-icon">📱</div>
+    <div class="permission-title">تأثير ثلاثي الأبعاد</div>
+    <div class="permission-text">
+      امتلك التجربة الكاملة مع تأثير الإمالة التفاعلي والانعكاسات الضوئية الحية عبر مستشعرات حركة جهازك.
+    </div>
+    <button class="permission-action" id="permissionBtn">تمكين التأثير ثلاثي الأبعاد</button>
+  </div>
+
+  <div class="app-shell">
+    <div class="glass-card" id="mainCard">
+      <div class="header">
+        <div class="profile">
+          <div class="avatar avatar-hamoudi">ح</div>
+          <div class="avatar-name">حمودي</div>
+        </div>
+
+        <div class="heart-wrap">
+          <svg class="heart-3d" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="heartGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#ec4899;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#f43f5e;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#fb7185;stop-opacity:1" />
+              </linearGradient>
+              <filter id="heartBloom" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                  fill="url(#heartGrad)"
+                  filter="url(#heartBloom)"
+                  stroke="rgba(255,255,255,0.35)"
+                  stroke-width="0.6"/>
+          </svg>
+        </div>
+
+        <div class="profile">
+          <div class="avatar avatar-fatima">ف</div>
+          <div class="avatar-name">فاطمة</div>
+        </div>
+      </div>
+
+      <div class="confession-block">
+        <div class="confession-badge">تاريخ الاعتراف: 15/06/2026 الساعة 11:54 (GMT+3)</div>
+      </div>
+
+      <div class="counter-engine">
+        <div class="counter-status" id="counterStatus">الوقت المنقضي</div>
+        <div class="days-hero" id="daysHero">0</div>
+        <div class="days-caption" id="daysCaption">يوم</div>
+
+        <div class="time-grid">
+          <div class="time-unit-card">
+            <div class="time-digits" id="hoursVal">00</div>
+            <div class="time-label">ساعة</div>
+          </div>
+          <div class="time-unit-card">
+            <div class="time-digits" id="minutesVal">00</div>
+            <div class="time-label">دقيقة</div>
+          </div>
+          <div class="time-unit-card">
+            <div class="time-digits" id="secondsVal">00</div>
+            <div class="time-label">ثانية</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+
+      const CONFESSION_DATE = new Date('2026-06-15T11:54:00+03:00');
+      const mainCard = document.getElementById('mainCard');
+      const permissionLayer = document.getElementById('permissionLayer');
+      const permissionBtn = document.getElementById('permissionBtn');
+
+      const daysHero = document.getElementById('daysHero');
+      const daysCaption = document.getElementById('daysCaption');
+      const hoursVal = document.getElementById('hoursVal');
+      const minutesVal = document.getElementById('minutesVal');
+      const secondsVal = document.getElementById('secondsVal');
+      const counterStatus = document.getElementById('counterStatus');
+
+      function spawnParticles() {
+        const field = document.getElementById('particleField');
+        const count = 18;
+        for (let i = 0; i < count; i++) {
+          const p = document.createElement('div');
+          p.className = 'particle';
+          const size = Math.random() * 3 + 1;
+          p.style.cssText = `
+            width: ${size}px;
+            height: ${size}px;
+            left: ${Math.random() * 100}vw;
+            animation-duration: ${Math.random() * 12 + 10}s;
+            animation-delay: ${Math.random() * 8}s;
+            opacity: ${Math.random() * 0.4 + 0.1};
+          `;
+          field.appendChild(p);
+        }
+      }
+      spawnParticles();
+
+      function getDayLabel(n) {
+        if (n === 1) return 'يوم';
+        if (n === 2) return 'يومان';
+        if (n >= 3 && n <= 10) return 'أيام';
+        return 'يوماً';
+      }
+
+      function tickCounter() {
+        const now = new Date();
+        const diff = now - CONFESSION_DATE;
+        const isFuture = diff < 0;
+        const absDiff = Math.abs(diff);
+
+        counterStatus.textContent = isFuture ? 'الوقت المتبقي' : 'الوقت المنقضي';
+
+        const days = Math.floor(absDiff / (86400000));
+        const hours = Math.floor((absDiff % 86400000) / 3600000);
+        const minutes = Math.floor((absDiff % 3600000) / 60000);
+        const seconds = Math.floor((absDiff % 60000) / 1000);
+
+        daysHero.textContent = days;
+        daysCaption.textContent = getDayLabel(days);
+        hoursVal.textContent = hours.toString().padStart(2, '0');
+        minutesVal.textContent = minutes.toString().padStart(2, '0');
+        secondsVal.textContent = seconds.toString().padStart(2, '0');
+      }
+
+      setInterval(tickCounter, 1000);
+      tickCounter();
+
+      let tiltActive = false;
+
+      function applyTilt(beta, gamma) {
+        const maxTilt = 14;
+        const rx = Math.max(-maxTilt, Math.min(maxTilt, beta * 0.45));
+        const ry = Math.max(-maxTilt, Math.min(maxTilt, gamma * 0.45));
+
+        mainCard.style.setProperty('--rx', `${-rx}deg`);
+        mainCard.style.setProperty('--ry', `${ry}deg`);
+
+        const hx = gamma * 3.5;
+        const hy = beta * 3.5;
+        mainCard.style.setProperty('--hx', `${hx}px`);
+        mainCard.style.setProperty('--hy', `${hy}px`);
+      }
+
+      function onDeviceOrientation(e) {
+        if (!tiltActive) return;
+        applyTilt(e.beta || 0, e.gamma || 0);
+      }
+
+      function enableTilt() {
+        tiltActive = true;
+        permissionLayer.classList.add('dismissed');
+        window.addEventListener('deviceorientation', onDeviceOrientation);
+      }
+
+      function requestOrientationAccess() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') enableTilt();
+            })
+            .catch(() => {
+              enableTilt();
+            });
+        } else {
+          enableTilt();
+        }
+      }
+
+      function initPermission() {
+        if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+          permissionLayer.classList.remove('dismissed');
+        } else {
+          enableTilt();
+        }
+      }
+
+      permissionBtn.addEventListener('click', requestOrientationAccess);
+
+      if (!window.matchMedia('(pointer: coarse)').matches) {
+        document.addEventListener('mousemove', (e) => {
+          const x = (e.clientX / window.innerWidth - 0.5) * 2;
+          const y = (e.clientY / window.innerHeight - 0.5) * 2;
+          applyTilt(y * 15, x * 15);
+        });
+        permissionLayer.classList.add('dismissed');
+      } else {
+        initPermission();
+      }
+
+      document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+      document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
+      document.addEventListener('gestureend', function(e) { e.preventDefault(); });
+    })();
+  </script>
+</body>
+</html>
