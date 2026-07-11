@@ -7,10 +7,17 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <!-- Content Security Policy: ضروري جداً لـ Cordova -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src *; img-src 'self' data: blob:; media-src *;">
+  
   <title>حمودي & فاطمة</title>
+  
+  <!-- Google Fonts مع fallback محلي -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --glow-violet: #7c3aed;
@@ -19,7 +26,6 @@
       --deep-bg: #050508;
       --card-bg: rgba(255, 255, 255, 0.025);
       --card-border: rgba(255, 255, 255, 0.08);
-      --card-highlight: rgba(255, 255, 255, 0.04);
     }
 
     * {
@@ -36,18 +42,33 @@
 
     html, body {
       height: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
       width: 100%;
       overflow: hidden;
       touch-action: none;
-      font-family: 'Tajawal', sans-serif;
+      font-family: 'Tajawal', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--deep-bg);
       color: #ffffff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    /* Fallback: إذا فشلت animations، المحتوى يظهر على أي حال */
+    .glass-card {
+      opacity: 1 !important;
     }
 
     /* Animated Deep Background */
     .bg-mesh {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: 0;
       background:
         radial-gradient(ellipse at 15% 15%, rgba(124, 58, 237, 0.18) 0%, transparent 55%),
@@ -61,6 +82,7 @@
       position: fixed;
       border-radius: 50%;
       filter: blur(100px);
+      -webkit-filter: blur(100px);
       pointer-events: none;
       z-index: 1;
       opacity: 0.35;
@@ -110,12 +132,18 @@
     /* App Container */
     .app-shell {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-left: 20px;
+      padding-right: 20px;
       perspective: 1500px;
       overflow: hidden;
     }
@@ -134,13 +162,12 @@
       transform-style: preserve-3d;
       transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
       transition: transform 0.15s ease-out;
-      opacity: 0;
       box-shadow:
         0 30px 60px -15px rgba(0, 0, 0, 0.6),
         0 0 0 1px rgba(255, 255, 255, 0.04),
         inset 0 1px 1px rgba(255, 255, 255, 0.08),
         inset 0 0 100px rgba(124, 58, 237, 0.03);
-      animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      animation: cardReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
     }
 
     @keyframes cardReveal {
@@ -152,7 +179,10 @@
     .glass-card::before {
       content: '';
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       border-radius: 36px;
       background: radial-gradient(
         circle at calc(50% + var(--hx, 0px)) calc(50% + var(--hy, 0px)),
@@ -170,11 +200,15 @@
     .glass-card::after {
       content: '';
       position: absolute;
-      inset: -2px;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
       border-radius: 38px;
       background: linear-gradient(135deg, rgba(124, 58, 237, 0.25), rgba(244, 63, 94, 0.2));
       z-index: -1;
       filter: blur(25px);
+      -webkit-filter: blur(25px);
       opacity: 0.6;
       animation: ambientPulse 4s ease-in-out infinite;
     }
@@ -288,6 +322,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
       letter-spacing: 0.3px;
     }
@@ -348,6 +383,7 @@
       border-radius: 22px;
       padding: 18px 6px;
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       transform: translateZ(15px);
       overflow: hidden;
       transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -387,7 +423,10 @@
     /* Permission Overlay */
     .permission-layer {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       z-index: 1000;
       background: rgba(5, 5, 8, 0.96);
       backdrop-filter: blur(30px);
@@ -443,7 +482,7 @@
       background: linear-gradient(135deg, #7c3aed, #db2777);
       border: none;
       color: #fff;
-      font-family: 'Tajawal', sans-serif;
+      font-family: 'Tajawal', system-ui, sans-serif;
       font-size: 17px;
       font-weight: 800;
       padding: 16px 48px;
@@ -457,7 +496,10 @@
     .permission-action::after {
       content: '';
       position: absolute;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
       opacity: 0;
       transition: opacity 0.3s ease;
@@ -494,6 +536,7 @@
       .time-digits { font-size: 24px; }
     }
   </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -573,9 +616,18 @@
     </div>
   </div>
 
+  <!-- Cordova bridge - ضروري جداً -->
+  <script src="cordova.js"></script>
+  
   <script>
     (function() {
       'use strict';
+
+      // Global error catcher - يظهر الأخطاء حتى بدون DevTools
+      window.onerror = function(msg, url, line, col, error) {
+        console.error('APP ERROR:', msg, 'at', line, ':', col);
+        return false;
+      };
 
       const CONFESSION_DATE = new Date('2026-06-15T11:54:00+03:00');
       const mainCard = document.getElementById('mainCard');
@@ -591,23 +643,16 @@
 
       function spawnParticles() {
         const field = document.getElementById('particleField');
-        const count = 18;
+        if (!field) return;
+        const count = 12; // خفّفت من 18 لـ 12 لأداء أفضل
         for (let i = 0; i < count; i++) {
           const p = document.createElement('div');
           p.className = 'particle';
           const size = Math.random() * 3 + 1;
-          p.style.cssText = `
-            width: ${size}px;
-            height: ${size}px;
-            left: ${Math.random() * 100}vw;
-            animation-duration: ${Math.random() * 12 + 10}s;
-            animation-delay: ${Math.random() * 8}s;
-            opacity: ${Math.random() * 0.4 + 0.1};
-          `;
+          p.style.cssText = 'width:' + size + 'px;height:' + size + 'px;left:' + (Math.random() * 100) + 'vw;animation-duration:' + (Math.random() * 12 + 10) + 's;animation-delay:' + (Math.random() * 8) + 's;opacity:' + (Math.random() * 0.4 + 0.1) + ';';
           field.appendChild(p);
         }
       }
-      spawnParticles();
 
       function getDayLabel(n) {
         if (n === 1) return 'يوم';
@@ -617,26 +662,30 @@
       }
 
       function tickCounter() {
-        const now = new Date();
-        const diff = now - CONFESSION_DATE;
-        const isFuture = diff < 0;
-        const absDiff = Math.abs(diff);
+        try {
+          const now = new Date();
+          const diff = now - CONFESSION_DATE;
+          const isFuture = diff < 0;
+          const absDiff = Math.abs(diff);
 
-        counterStatus.textContent = isFuture ? 'الوقت المتبقي' : 'الوقت المنقضي';
+          counterStatus.textContent = isFuture ? 'الوقت المتبقي' : 'الوقت المنقضي';
 
-        const days = Math.floor(absDiff / (86400000));
-        const hours = Math.floor((absDiff % 86400000) / 3600000);
-        const minutes = Math.floor((absDiff % 3600000) / 60000);
-        const seconds = Math.floor((absDiff % 60000) / 1000);
+          const days = Math.floor(absDiff / 86400000);
+          const hours = Math.floor((absDiff % 86400000) / 3600000);
+          const minutes = Math.floor((absDiff % 3600000) / 60000);
+          const seconds = Math.floor((absDiff % 60000) / 1000);
 
-        daysHero.textContent = days;
-        daysCaption.textContent = getDayLabel(days);
-        hoursVal.textContent = hours.toString().padStart(2, '0');
-        minutesVal.textContent = minutes.toString().padStart(2, '0');
-        secondsVal.textContent = seconds.toString().padStart(2, '0');
+          daysHero.textContent = days;
+          daysCaption.textContent = getDayLabel(days);
+          hoursVal.textContent = hours.toString().padStart(2, '0');
+          minutesVal.textContent = minutes.toString().padStart(2, '0');
+          secondsVal.textContent = seconds.toString().padStart(2, '0');
+        } catch (e) {
+          console.error('Counter error:', e);
+        }
       }
 
-      setInterval(tickCounter, 1000);
+      let counterInterval = setInterval(tickCounter, 1000);
       tickCounter();
 
       let tiltActive = false;
@@ -646,13 +695,13 @@
         const rx = Math.max(-maxTilt, Math.min(maxTilt, beta * 0.45));
         const ry = Math.max(-maxTilt, Math.min(maxTilt, gamma * 0.45));
 
-        mainCard.style.setProperty('--rx', `${-rx}deg`);
-        mainCard.style.setProperty('--ry', `${ry}deg`);
+        mainCard.style.setProperty('--rx', (-rx) + 'deg');
+        mainCard.style.setProperty('--ry', ry + 'deg');
 
         const hx = gamma * 3.5;
         const hy = beta * 3.5;
-        mainCard.style.setProperty('--hx', `${hx}px`);
-        mainCard.style.setProperty('--hy', `${hy}px`);
+        mainCard.style.setProperty('--hx', hx + 'px');
+        mainCard.style.setProperty('--hy', hy + 'px');
       }
 
       function onDeviceOrientation(e) {
@@ -669,10 +718,10 @@
       function requestOrientationAccess() {
         if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
           DeviceOrientationEvent.requestPermission()
-            .then(response => {
+            .then(function(response) {
               if (response === 'granted') enableTilt();
             })
-            .catch(() => {
+            .catch(function() {
               enableTilt();
             });
         } else {
@@ -690,10 +739,11 @@
 
       permissionBtn.addEventListener('click', requestOrientationAccess);
 
+      // Mouse fallback للديسكتوب
       if (!window.matchMedia('(pointer: coarse)').matches) {
-        document.addEventListener('mousemove', (e) => {
-          const x = (e.clientX / window.innerWidth - 0.5) * 2;
-          const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        document.addEventListener('mousemove', function(e) {
+          var x = (e.clientX / window.innerWidth - 0.5) * 2;
+          var y = (e.clientY / window.innerHeight - 0.5) * 2;
           applyTilt(y * 15, x * 15);
         });
         permissionLayer.classList.add('dismissed');
@@ -701,9 +751,40 @@
         initPermission();
       }
 
+      // Prevent zoom gestures
       document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
       document.addEventListener('gesturechange', function(e) { e.preventDefault(); });
       document.addEventListener('gestureend', function(e) { e.preventDefault(); });
+
+      // Initialize particles
+      spawnParticles();
+
+      // Cordova deviceready handler
+      function onDeviceReady() {
+        console.log('Cordova device is ready');
+        document.body.classList.add('cordova-ready');
+        // Force reflow
+        document.body.style.display = 'none';
+        document.body.offsetHeight;
+        document.body.style.display = '';
+      }
+
+      if (window.cordova) {
+        document.addEventListener('deviceready', onDeviceReady, false);
+      } else {
+        // Browser fallback
+        console.log('Running in browser mode');
+        onDeviceReady();
+      }
+
+      // Fallback: إذا ما اشتغل cordova خلال 5 ثواني، اظهر المحتوى على أي حال
+      setTimeout(function() {
+        if (!document.body.classList.contains('cordova-ready')) {
+          console.log('Fallback: forcing UI visible');
+          onDeviceReady();
+        }
+      }, 5000);
+
     })();
   </script>
 </body>
